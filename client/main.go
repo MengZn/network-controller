@@ -2,12 +2,15 @@ package main
 
 import (
 	"log"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
 
 	flags "github.com/jessevdk/go-flags"
 	"github.com/vtxnetworks/network-controller/client/common"
+	"github.com/vtxnetworks/network-controller/client/handler"
+
 	pb "github.com/vtxnetworks/network-controller/messages"
 	"github.com/vtxnetworks/network-controller/utils"
 	"golang.org/x/net/context"
@@ -53,7 +56,9 @@ type connectOptions struct {
 }
 
 type clientOptions struct {
-	Server        string                   `short:"s" long:"server" description:"target server address, [ip:port] for TCP or unix://[path] for UNIX" required:"true"`
+	Server         string `short:"s" long:"server" description:"target server address, [ip:port] for TCP or unix://[path] for UNIX" required:"true"`
+	DeploymentName string `long:"deploy" description:"target " required:"true"`
+
 	Connect       connectOptions           `group:"connectOptions"`
 	Interface     interfaceOptions         `group:"interfaceOptions" `
 	RouteWithGW   routeViaGatewayOptions   `group:"routeViaGatewayOptions" `
@@ -72,18 +77,18 @@ func main() {
 	var setRoute bool
 	var setRouteViaInterface bool
 	var setRouteViaGateway bool
-
+	rand.Seed(time.Now().UnixNano())
 	if _, err := parser.Parse(); err != nil {
 		parser.WriteHelp(os.Stderr)
 		os.Exit(1)
 	}
 
 	// Verify CIDR address and setCIDR bool
-	if options.Interface.CIDR != "" {
-		setCIDR = true
-	} else {
-		log.Println("Doesn't have a valid CIDR address. Won't set the IP for", options.Connect.Interface)
-	}
+	// if options.Interface.CIDR != "" {
+	// 	setCIDR = true
+	// } else {
+	// 	log.Println("Doesn't have a valid CIDR address. Won't set the IP for", options.Connect.Interface)
+	// }
 
 	if setCIDR {
 		if !utils.IsValidCIDR(options.Interface.CIDR) {
@@ -201,12 +206,13 @@ func main() {
 		connectBridgeResp.Reason,
 		"Connect bridge",
 	)
-
-	if setCIDR {
+	if options.DeploymentName != "" {
+		ipHandler, err := handler.InitHandler([]string{"http://192.168.33.10:32379"}, options.DeploymentName, ctx)
+		cidr := ipHandler.IPRegister() + "/16"
 		configureIfaceResp, err := ncClient.ConfigureIface(ctx,
 			&pb.ConfigureIfaceRequest{
 				Path:              findNetworkNamespacePathResp.Path,
-				CIDR:              options.Interface.CIDR,
+				CIDR:              cidr,
 				ContainerVethName: options.Connect.Interface,
 			},
 		)
@@ -218,7 +224,31 @@ func main() {
 			configureIfaceResp.Reason,
 			"Configure interface",
 		)
+		configureIfaceResp, err := ncClient.ConfigureIface(ctx,
+			&pb.ConfigureIfaceRequest{
+				Path:              findNetworkNamespacePathResp.Path,
+				CIDR:              cidr,
+				ContainerVethName: options.Connect.Interface,
+			},
+		)
 	}
+	// if setCIDR {
+	// 	configureIfaceResp, err := ncClient.ConfigureIface(ctx,
+	// 		&pb.ConfigureIfaceRequest{
+	// 			Path:              findNetworkNamespacePathResp.Path,
+	// 			CIDR:              options.Interface.CIDR,
+	// 			ContainerVethName: options.Connect.Interface,
+	// 		},
+	// 	)
+	// 	if err != nil {
+	// 		log.Fatalf("There is something wrong with setting configure interface: %v", err)
+	// 	}
+	// 	common.CheckFatal(
+	// 		configureIfaceResp.Success,
+	// 		configureIfaceResp.Reason,
+	// 		"Configure interface",
+	// 	)
+	// }
 
 	if setVLANAccessLink {
 		setPortResp, err := ncClient.SetPort(ctx,
