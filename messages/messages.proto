@@ -4,6 +4,9 @@ package messages;
 
 // The network control service definition.
 service NetworkControl {
+
+  rpc AddPodInfo(AddRequest) returns (Response){}
+
   rpc Echo (EchoRequest) returns (EchoResponse) {}
   rpc Ping (PingRequest) returns (PingResponse) {}
 
@@ -34,6 +37,11 @@ service NetworkControl {
   rpc AddRoute (AddRouteRequest) returns (Response) {}
   rpc AddRoutesViaInterface (AddRoutesRequest) returns (Response) {}
   rpc AddRoutesViaGateway (AddRoutesRequest) returns (Response) {}
+}
+
+message AddRequest {
+  string name = 1;
+  string ip = 2;
 }
 
 message EchoRequest {
