@@ -6,12 +6,9 @@ package messages
 import (
 	context "context"
 	fmt "fmt"
-	math "math"
-
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
+	math "math"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -23,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type AddRequest struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -1767,71 +1764,6 @@ type NetworkControlServer interface {
 	AddRoute(context.Context, *AddRouteRequest) (*Response, error)
 	AddRoutesViaInterface(context.Context, *AddRoutesRequest) (*Response, error)
 	AddRoutesViaGateway(context.Context, *AddRoutesRequest) (*Response, error)
-}
-
-// UnimplementedNetworkControlServer can be embedded to have forward compatible implementations.
-type UnimplementedNetworkControlServer struct {
-}
-
-func (*UnimplementedNetworkControlServer) AddPodInfo(ctx context.Context, req *AddRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddPodInfo not implemented")
-}
-func (*UnimplementedNetworkControlServer) Echo(ctx context.Context, req *EchoRequest) (*EchoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
-}
-func (*UnimplementedNetworkControlServer) Ping(ctx context.Context, req *PingRequest) (*PingResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
-}
-func (*UnimplementedNetworkControlServer) CreateBridge(ctx context.Context, req *CreateBridgeRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateBridge not implemented")
-}
-func (*UnimplementedNetworkControlServer) DeleteBridge(ctx context.Context, req *DeleteBridgeRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteBridge not implemented")
-}
-func (*UnimplementedNetworkControlServer) AddPort(ctx context.Context, req *AddPortRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddPort not implemented")
-}
-func (*UnimplementedNetworkControlServer) AddDPDKPort(ctx context.Context, req *AddPortRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddDPDKPort not implemented")
-}
-func (*UnimplementedNetworkControlServer) GetPort(ctx context.Context, req *GetPortRequest) (*GetPortResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPort not implemented")
-}
-func (*UnimplementedNetworkControlServer) SetPort(ctx context.Context, req *SetPortRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetPort not implemented")
-}
-func (*UnimplementedNetworkControlServer) DeletePort(ctx context.Context, req *DeletePortRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeletePort not implemented")
-}
-func (*UnimplementedNetworkControlServer) AddFlow(ctx context.Context, req *AddFlowRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddFlow not implemented")
-}
-func (*UnimplementedNetworkControlServer) DeleteFlow(ctx context.Context, req *DeleteFlowRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteFlow not implemented")
-}
-func (*UnimplementedNetworkControlServer) DumpFlows(ctx context.Context, req *DumpFlowsRequest) (*DumpFlowsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DumpFlows not implemented")
-}
-func (*UnimplementedNetworkControlServer) DumpPorts(ctx context.Context, req *DumpPortsRequest) (*DumpPortsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DumpPorts not implemented")
-}
-func (*UnimplementedNetworkControlServer) FindNetworkNamespacePath(ctx context.Context, req *FindNetworkNamespacePathRequest) (*FindNetworkNamespacePathResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindNetworkNamespacePath not implemented")
-}
-func (*UnimplementedNetworkControlServer) ConnectBridge(ctx context.Context, req *ConnectBridgeRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ConnectBridge not implemented")
-}
-func (*UnimplementedNetworkControlServer) ConfigureIface(ctx context.Context, req *ConfigureIfaceRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ConfigureIface not implemented")
-}
-func (*UnimplementedNetworkControlServer) AddRoute(ctx context.Context, req *AddRouteRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddRoute not implemented")
-}
-func (*UnimplementedNetworkControlServer) AddRoutesViaInterface(ctx context.Context, req *AddRoutesRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddRoutesViaInterface not implemented")
-}
-func (*UnimplementedNetworkControlServer) AddRoutesViaGateway(ctx context.Context, req *AddRoutesRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddRoutesViaGateway not implemented")
 }
 
 func RegisterNetworkControlServer(s *grpc.Server, srv NetworkControlServer) {
